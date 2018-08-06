@@ -1,5 +1,6 @@
 package fetcher;
 
+import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Issue;
@@ -34,11 +35,17 @@ public class FetcherApp {
             }
             List<Issue> issues;
             if (found != null) {
-                logger.info("Issues for milestone " + found.getTitle() + " found");
+                logger.info(String.format("Issues for milestone %s found", found.getTitle()));
                 issues = gitLabApi.getMilestonesApi().getIssues(project.getId(), found.getId());
+                if (issues.size() > 0) {
+                    logger.info(String.format("Processing %d issues. This includes both closed and opened", issues.size()));
+                }
                 //Sorting by ticket number ascending
+                logger.info("Listing closed issues:");
                 issues.sort(Comparator.comparing(Issue::getIid));
-                issues.forEach(issue -> System.out.println(issue.getIid()+ " " + issue.getTitle()));
+                issues.stream()
+                        .filter(issue -> issue.getState().equals(Constants.IssueState.CLOSED))
+                        .forEach(issue -> System.out.println(issue.getIid()+ " " + issue.getTitle()));
             }
         } catch (GitLabApiException e) {
             e.printStackTrace();
