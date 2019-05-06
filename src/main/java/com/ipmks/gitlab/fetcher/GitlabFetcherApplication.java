@@ -1,4 +1,4 @@
-package fetcher;
+package com.ipmks.gitlab.fetcher;
 
 import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
@@ -13,8 +13,8 @@ import java.util.Comparator;
 import java.util.List;
 
 //args[0] = private token, args[1] = milestone
-public class FetcherApp {
-    private static final Logger logger = LoggerFactory.getLogger(FetcherApp.class);
+public class GitlabFetcherApplication {
+    private static final Logger logger = LoggerFactory.getLogger(GitlabFetcherApplication.class);
 
     public static void main(String[] args) {
         if (args.length < 2) {

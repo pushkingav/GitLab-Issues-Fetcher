@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.ipmks.gitlab</groupId>
-    <artifactId>gitlab-issues-tracker</artifactId>
+    <artifactId>gitlab-issues-fetcher</artifactId>
     <version>0.1.0</version>
 
     <parent>
@@ -14,13 +14,21 @@
     </parent>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
+        <!-- Hibernate -->
+        <hibernate.version>5.3.7.Final</hibernate.version>
+        <hibernate-validator.version>6.0.13.Final</hibernate-validator.version>
+        <javax-el.version>3.0.1-b10</javax-el.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -36,14 +44,36 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
+        <!--https://medium.com/criciumadev/its-time-migrating-to-java-11-5eb3868354f9-->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.4.0-b180830.0438</version>
+        </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.ipmks.gitlab.fetcher.GitlabFetcherApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
