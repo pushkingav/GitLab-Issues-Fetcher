@@ -9,6 +9,7 @@ import org.gitlab4j.api.models.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.NotNull;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,8 +17,8 @@ import java.util.stream.Collectors;
 public class GitlabUtils {
     private static final Logger logger = LoggerFactory.getLogger(GitlabUtils.class);
 
-    public static List<String> getGitlabIssuesForMilestone(String token, String milestone) {
-        GitLabApi gitLabApi = new GitLabApi("gitlab.api.host", token);
+    public static List<String> getGitlabIssuesForMilestone(@NotNull String apiHost, @NotNull String token, @NotNull String milestone) {
+        GitLabApi gitLabApi = new GitLabApi(apiHost, token);
         gitLabApi.setIgnoreCertificateErrors(true);
         List<String> result = null;
         try {
