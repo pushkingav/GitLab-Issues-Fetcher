@@ -20,23 +20,23 @@ public class GitlabUtils {
     public static List<String> getGitlabIssuesForMilestone(@NotNull String apiHost, @NotNull String token, @NotNull String milestone) {
         GitLabApi gitLabApi = new GitLabApi(apiHost, token);
         gitLabApi.setIgnoreCertificateErrors(true);
+        Milestone foundMilestone = getGitlabMilestone(gitLabApi, milestone);
         List<String> result = null;
         try {
             Project project = gitLabApi.getProjectApi().getProject("rational-enterprise", "rational-governance");
             logger.info("Found project - " + project.getName());
             List<Milestone> milestones = gitLabApi.getMilestonesApi().getMilestones(project.getId());
             logger.info("Got milestones. Processing...");
-            Milestone found  = null;
             for (Milestone current : milestones) {
                 if (current.getTitle().equals(milestone)) {
-                    found = current;
+                    foundMilestone = current;
                 }
             }
             List<Issue> issues;
 
-            if (found != null) {
-                logger.info(String.format("Issues for milestone %s found", found.getTitle()));
-                issues = gitLabApi.getMilestonesApi().getIssues(project.getId(), found.getId());
+            if (foundMilestone != null) {
+                logger.info(String.format("Issues for milestone %s found", foundMilestone.getTitle()));
+                issues = gitLabApi.getMilestonesApi().getIssues(project.getId(), foundMilestone.getId());
                 if (issues.size() > 0) {
                     logger.info(String.format("Processing %d issues. This includes both closed and opened", issues.size()));
                 }
@@ -52,5 +52,23 @@ public class GitlabUtils {
             e.printStackTrace();
         }
         return result;
+    }
+
+    private static Milestone getGitlabMilestone(GitLabApi gitLabApi, String milestone) {
+        Milestone found = null;
+        try {
+            Project project = gitLabApi.getProjectApi().getProject("rational-enterprise", "rational-governance");
+            logger.info("Found project - " + project.getName());
+            List<Milestone> milestones = gitLabApi.getMilestonesApi().getMilestones(project.getId());
+            logger.info("Got milestones. Processing...");
+            for (Milestone current : milestones) {
+                if (current.getTitle().equals(milestone)) {
+                    found = current;
+                }
+            }
+        } catch (GitLabApiException e) {
+            e.printStackTrace();
+        }
+        return found;
     }
 }
