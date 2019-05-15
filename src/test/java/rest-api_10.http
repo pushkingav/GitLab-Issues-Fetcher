@@ -1,0 +1,11 @@
+GET http://localhost:18080/issues/4.7.35.2
+Accept: */*
+Cache-Control: no-cache
+###
+
+
+GET http://localhost:18080/issues/RG-4.7.36/apushkin@ipmks.com
+Accept: */*
+Cache-Control: no-cache
+###
+

@@ -1,12 +1,14 @@
 package com.ipmks.gitlab.fetcher.service;
 
+import com.ipmks.gitlab.fetcher.gitlab.GitlabUtils;
+import com.ipmks.gitlab.fetcher.model.to.IssueTo;
 import org.gitlab4j.api.GitLabApi;
-import org.gitlab4j.api.models.Issue;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("gitlabApiService")
 public class GitlabApiServiceImpl implements GitlabApiService {
@@ -15,6 +17,12 @@ public class GitlabApiServiceImpl implements GitlabApiService {
 
     @Value("${gitlab.api.host}")
     private String apiHost;
+
+    @Value("${gitlab.api.namespace}")
+    private String nameSpace;
+
+    @Value("${gitlab.api.project}")
+    private String projectName;
 
     private GitLabApi gitLabApi;
 
@@ -26,11 +34,13 @@ public class GitlabApiServiceImpl implements GitlabApiService {
 
     @Override
     public List<String> getGitlabIssuesForMilestone(String milestone) {
-        return null;
+        return GitlabUtils.getGitlabIssuesForMilestone(gitLabApi,nameSpace, projectName, milestone);
     }
 
     @Override
-    public List<Issue> getUserIssuesOfMilestone(String email, String milestone) {
-        return null;
+    public List<IssueTo> getUserIssuesOfMilestone(String email, String milestone) {
+        //TODO - make grouping by labels: release blocker, high, low
+        return GitlabUtils.getGitlabIssuesOfUserForMilestone(gitLabApi, nameSpace, projectName, milestone, email)
+                .stream().map(IssueTo::createFromIssue).collect(Collectors.toList());
     }
 }

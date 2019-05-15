@@ -6,10 +6,10 @@ import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Issue;
 import org.gitlab4j.api.models.Milestone;
 import org.gitlab4j.api.models.Project;
+import org.gitlab4j.api.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,23 +17,14 @@ import java.util.stream.Collectors;
 public class GitlabUtils {
     private static final Logger logger = LoggerFactory.getLogger(GitlabUtils.class);
 
-    public static List<String> getGitlabIssuesForMilestone(@NotNull String apiHost, @NotNull String token, @NotNull String milestone) {
-        GitLabApi gitLabApi = new GitLabApi(apiHost, token);
-        gitLabApi.setIgnoreCertificateErrors(true);
-        Milestone foundMilestone = getGitlabMilestone(gitLabApi, milestone);
+    public static List<String> getGitlabIssuesForMilestone(GitLabApi gitLabApi, String nameSpace, String projectName, String milestone) {
         List<String> result = null;
         try {
-            Project project = gitLabApi.getProjectApi().getProject("rational-enterprise", "rational-governance");
+            Project project = gitLabApi.getProjectApi().getProject(nameSpace, projectName);
             logger.info("Found project - " + project.getName());
-            List<Milestone> milestones = gitLabApi.getMilestonesApi().getMilestones(project.getId());
-            logger.info("Got milestones. Processing...");
-            for (Milestone current : milestones) {
-                if (current.getTitle().equals(milestone)) {
-                    foundMilestone = current;
-                }
-            }
-            List<Issue> issues;
+            Milestone foundMilestone = getGitlabMilestone(gitLabApi,project.getId(), milestone);
 
+            List<Issue> issues;
             if (foundMilestone != null) {
                 logger.info(String.format("Issues for milestone %s found", foundMilestone.getTitle()));
                 issues = gitLabApi.getMilestonesApi().getIssues(project.getId(), foundMilestone.getId());
@@ -54,12 +45,28 @@ public class GitlabUtils {
         return result;
     }
 
-    private static Milestone getGitlabMilestone(GitLabApi gitLabApi, String milestone) {
+    public static List<Issue> getGitlabIssuesOfUserForMilestone(GitLabApi gitLabApi, String nameSpace, String projectName,
+                                                                 String milestone, String email) {
+        List<Issue> userIssues = null;
+        try {
+            List<User> users = gitLabApi.getUserApi().findUsers(email);
+            Project project = gitLabApi.getProjectApi().getProject(nameSpace, projectName);
+            logger.info("Found project - " + project.getName());
+            Milestone foundMilestone = getGitlabMilestone(gitLabApi,project.getId(), milestone);
+            List<Issue> issues = gitLabApi.getMilestonesApi().getIssues(project.getId(), foundMilestone.getId());
+            userIssues = issues.stream()
+                    .filter(issue -> issue.getAssignee().getId().equals(users.get(0).getId()))
+                    .collect(Collectors.toList());
+        } catch (GitLabApiException e) {
+            e.printStackTrace();
+        }
+        return userIssues;
+    }
+
+    private static Milestone getGitlabMilestone(GitLabApi gitLabApi, Integer projectId, String milestone) {
         Milestone found = null;
         try {
-            Project project = gitLabApi.getProjectApi().getProject("rational-enterprise", "rational-governance");
-            logger.info("Found project - " + project.getName());
-            List<Milestone> milestones = gitLabApi.getMilestonesApi().getMilestones(project.getId());
+            List<Milestone> milestones = gitLabApi.getMilestonesApi().getMilestones(projectId);
             logger.info("Got milestones. Processing...");
             for (Milestone current : milestones) {
                 if (current.getTitle().equals(milestone)) {
@@ -68,6 +75,9 @@ public class GitlabUtils {
             }
         } catch (GitLabApiException e) {
             e.printStackTrace();
+        }
+        if (found == null) {
+            logger.warn("No milestone found for name: " + milestone);
         }
         return found;
     }
