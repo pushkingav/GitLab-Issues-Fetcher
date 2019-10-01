@@ -1,4 +1,4 @@
-GET http://localhost:18080/issues/4.7.35.2
+GET http://localhost:18080/issues/RG-4.7.40
 Accept: */*
 Cache-Control: no-cache
 ###

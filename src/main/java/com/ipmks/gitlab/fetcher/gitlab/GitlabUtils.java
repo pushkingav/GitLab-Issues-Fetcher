@@ -1,5 +1,6 @@
 package com.ipmks.gitlab.fetcher.gitlab;
 
+import com.ipmks.gitlab.fetcher.model.IpmksLabels;
 import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
@@ -22,7 +23,7 @@ public class GitlabUtils {
         try {
             Project project = gitLabApi.getProjectApi().getProject(nameSpace, projectName);
             logger.info("Found project - " + project.getName());
-            Milestone foundMilestone = getGitlabMilestone(gitLabApi,project.getId(), milestone);
+            Milestone foundMilestone = getGitlabMilestone(gitLabApi, project.getId(), milestone);
 
             List<Issue> issues;
             if (foundMilestone != null) {
@@ -36,23 +37,32 @@ public class GitlabUtils {
                 issues.sort(Comparator.comparing(Issue::getIid));
                 result = issues.stream()
                         .filter(issue -> issue.getState().equals(Constants.IssueState.CLOSED))
+                        .filter(issue -> {
+                            List<String> labels = issue.getLabels();
+                            return labels.stream().noneMatch(label -> label.equals(IpmksLabels.QA_APPROVED.getTitle())
+                                    || label.equals(IpmksLabels.TEST_AUTO.getTitle())
+                                    || label.equals(IpmksLabels.TEST_DO_NOT_TEST.getTitle()));
+            })
                         .map(issue -> issue.getIid() + " " + issue.getTitle())
                         .collect(Collectors.toList());
-            }
-        } catch (GitLabApiException e) {
-            e.printStackTrace();
         }
-        return result;
+    } catch(
+    GitLabApiException e)
+
+    {
+        e.printStackTrace();
     }
+        return result;
+}
 
     public static List<Issue> getGitlabIssuesOfUserForMilestone(GitLabApi gitLabApi, String nameSpace, String projectName,
-                                                                 String milestone, String email) {
+                                                                String milestone, String email) {
         List<Issue> userIssues = null;
         try {
             List<User> users = gitLabApi.getUserApi().findUsers(email);
             Project project = gitLabApi.getProjectApi().getProject(nameSpace, projectName);
             logger.info("Found project - " + project.getName());
-            Milestone foundMilestone = getGitlabMilestone(gitLabApi,project.getId(), milestone);
+            Milestone foundMilestone = getGitlabMilestone(gitLabApi, project.getId(), milestone);
             List<Issue> issues = gitLabApi.getMilestonesApi().getIssues(project.getId(), foundMilestone.getId());
             userIssues = issues.stream()
                     .filter(issue -> issue.getAssignee().getId().equals(users.get(0).getId()))
