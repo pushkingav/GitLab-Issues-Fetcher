@@ -17,10 +17,18 @@ var server = [
   "Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit",
   'Sign contract for "What are conference organizers afraid of?"'
 ];
+var milestones = [
+    "4.7.40-DEV1",
+    "4.7.40-DEV2",
+    "4.7.40-DEV3",
+    "4.7.40-DEV4",
+    "4.7.40-SR1"
+];
 
 module.exports = {
   // these 3 are used to create the tasks lists in TasksCard - Dashboard view
   bugs,
   website,
-  server
+  server,
+  milestones
 };

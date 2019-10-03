@@ -11,9 +11,10 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
+import Tasks from "../../components/Tasks/Tasks";
 
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
+import {milestones} from "variables/general.js"
 
 const combinedStyles = {
     ...styles,
@@ -44,22 +45,17 @@ export default function Dashboard() {
                 <GridItem xs={12} sm={12} md={8}>
                     <Card>
                         <CardHeader color="primary">
-                            <h4 className={classes.cardTitleWhite}>Select Milestone</h4>
-                            <p className={classes.cardCategoryWhite}>Choose the Milestone starting with...</p>
+                            <h4 className={classes.cardTitleWhite}>Select Milestones</h4>
+                            <p className={classes.cardCategoryWhite}>Choose Milestones to list issues...</p>
                         </CardHeader>
                         <CardBody>
                             <GridContainer>
                                 <GridItem xs={12} sm={12} md={5}>
-                                    <CustomInput
-                                        labelText="Type Milestone Name"
-                                        id="milestone-input"
-                                        formControlProps={{
-                                            fullWidth: true
-                                        }}
+                                    <Tasks
+                                        checkedIndexes={[1]}
+                                        tasksIndexes={[0, 1, 2]}
+                                        tasks={milestones}
                                     />
-                                </GridItem>
-                                <GridItem xs={12} sm={12} md={5}>
-                                    <Button color="primary">View Milestones</Button>
                                 </GridItem>
                             </GridContainer>
                         </CardBody>
