@@ -11,8 +11,10 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
+import CustomInput from "components/CustomInput/CustomInput.js";
 import Tasks from "../../components/Tasks/Tasks";
 
+import axios from "axios";
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 import {milestones} from "variables/general.js"
 
@@ -39,6 +41,14 @@ const useStyles = makeStyles(combinedStyles);
 
 export default function Dashboard() {
     const classes = useStyles();
+    const getMilestones = (searchStr) => {
+      axios.get('http://localhost:18080/milestones/${searchStr}').then(({data}) => {
+          console.log(data);
+          this.setState({
+              milestones: data
+          })
+      })
+    };
     return (
         <div>
             <GridContainer>
@@ -49,7 +59,19 @@ export default function Dashboard() {
                             <p className={classes.cardCategoryWhite}>Choose Milestones to list issues...</p>
                         </CardHeader>
                         <CardBody>
-                            <GridContainer>
+                            <GridContainer alignItems={"flex-end"}>
+                                <GridItem xs={12} sm={12} md={4}>
+                                    <CustomInput
+                                        labelText="Search Milestones"
+                                        id="searchMilestone"
+                                        formControlProps={{
+                                            fullWidth: true
+                                        }}
+                                    />
+                                </GridItem>
+                                <GridItem xs={12} sm={12} md={4}>
+                                    <Button color="primary">Search</Button>
+                                </GridItem>
                                 <GridItem xs={12} sm={12} md={5}>
                                     <Tasks
                                         checkedIndexes={[1]}
