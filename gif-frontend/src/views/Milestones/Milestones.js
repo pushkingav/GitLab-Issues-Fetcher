@@ -42,7 +42,7 @@ const useStyles = makeStyles(combinedStyles);
 export default function Dashboard() {
     const classes = useStyles();
     const getMilestones = (searchStr) => {
-      axios.get('http://localhost:18080/milestones/${searchStr}').then(({data}) => {
+      axios.get(`http://localhost:18080/milestones/${searchStr}`).then(({data}) => {
           console.log(data);
           this.setState({
               milestones: data
@@ -70,7 +70,7 @@ export default function Dashboard() {
                                     />
                                 </GridItem>
                                 <GridItem xs={12} sm={12} md={4}>
-                                    <Button color="primary">Search</Button>
+                                    <Button color="primary" onClick={getMilestones("4.7.40")}>Search</Button>
                                 </GridItem>
                                 <GridItem xs={12} sm={12} md={5}>
                                     <Tasks
