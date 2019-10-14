@@ -3,6 +3,7 @@ package com.ipmks.gitlab.fetcher.service;
 import com.ipmks.gitlab.fetcher.gitlab.GitlabUtils;
 import com.ipmks.gitlab.fetcher.model.to.IssueTo;
 import org.gitlab4j.api.GitLabApi;
+import org.gitlab4j.api.models.Milestone;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -42,5 +43,10 @@ public class GitlabApiServiceImpl implements GitlabApiService {
         //TODO - make grouping by labels: release blocker, high, low
         return GitlabUtils.getGitlabIssuesOfUserForMilestone(gitLabApi, nameSpace, projectName, milestone, email)
                 .stream().map(IssueTo::createFromIssue).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Milestone> getMilestones(String startingWith) {
+        return GitlabUtils.getMilestones(gitLabApi, nameSpace, projectName, startingWith);
     }
 }

@@ -11,6 +11,7 @@ import org.gitlab4j.api.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,18 +43,15 @@ public class GitlabUtils {
                             return labels.stream().noneMatch(label -> label.equals(IpmksLabels.QA_APPROVED.getTitle())
                                     || label.equals(IpmksLabels.TEST_AUTO.getTitle())
                                     || label.equals(IpmksLabels.TEST_DO_NOT_TEST.getTitle()));
-            })
+                        })
                         .map(issue -> issue.getIid() + " " + issue.getTitle())
                         .collect(Collectors.toList());
+            }
+        } catch (GitLabApiException e) {
+            e.printStackTrace();
         }
-    } catch(
-    GitLabApiException e)
-
-    {
-        e.printStackTrace();
-    }
         return result;
-}
+    }
 
     public static List<Issue> getGitlabIssuesOfUserForMilestone(GitLabApi gitLabApi, String nameSpace, String projectName,
                                                                 String milestone, String email) {
@@ -90,5 +88,23 @@ public class GitlabUtils {
             logger.warn("No milestone found for name: " + milestone);
         }
         return found;
+    }
+
+    public static List<Milestone> getMilestones(GitLabApi gitLabApi, String nameSpace, String projectName, String startingWith) {
+        List<Milestone> milestones = new ArrayList<>();
+        try {
+            Project project = gitLabApi.getProjectApi().getProject(nameSpace, projectName);
+            logger.info("Found project - " + project.getName());
+            List<Milestone> allMilestones = gitLabApi.getMilestonesApi().getMilestones(project.getId());
+            if(!allMilestones.isEmpty()) {
+                logger.info("Milestones found. Listing them...");
+            } else {
+                logger.info("Sorry. No milestones found for the project: " + project.getName());
+            }
+            milestones.addAll(allMilestones.stream().filter(m -> m.getTitle().contains(startingWith)).collect(Collectors.toList()));
+        } catch (GitLabApiException e) {
+            e.printStackTrace();
+        }
+        return milestones;
     }
 }

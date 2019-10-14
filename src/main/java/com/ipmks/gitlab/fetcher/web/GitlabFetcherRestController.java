@@ -2,6 +2,7 @@ package com.ipmks.gitlab.fetcher.web;
 
 import com.ipmks.gitlab.fetcher.model.to.IssueTo;
 import com.ipmks.gitlab.fetcher.service.GitlabApiService;
+import org.gitlab4j.api.models.Milestone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
@@ -33,5 +34,10 @@ public class GitlabFetcherRestController {
     @GetMapping("/issues/{milestone}/{email}")
     public List<IssueTo> getUserIssuesOfMilestone(@PathVariable("milestone") String milestone, @PathVariable("email") String email) {
         return gitlabApiService.getUserIssuesOfMilestone(email, milestone);
+    }
+
+    @GetMapping("/milestones/{milestone}")
+    public List<Milestone> getMilestonesStartingWith(@PathVariable("milestone") String milestone) {
+        return gitlabApiService.getMilestones(milestone);
     }
 }

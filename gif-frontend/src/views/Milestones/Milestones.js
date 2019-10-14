@@ -14,7 +14,7 @@ import CardFooter from "components/Card/CardFooter.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import Tasks from "../../components/Tasks/Tasks";
 
-import axios from "axios";
+import Api from "utils/Api";
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
 import {milestones} from "variables/general.js"
 
@@ -42,7 +42,10 @@ const useStyles = makeStyles(combinedStyles);
 export default function Dashboard() {
     const classes = useStyles();
     const getMilestones = (searchStr) => {
-      axios.get(`http://localhost:18080/milestones/${searchStr}`).then(({data}) => {
+        if (!!searchStr) {
+            searchStr = "4.7.40";
+        }
+      Api.get(`/milestones/${searchStr}`).then(({data}) => {
           console.log(data);
           this.setState({
               milestones: data
@@ -70,7 +73,7 @@ export default function Dashboard() {
                                     />
                                 </GridItem>
                                 <GridItem xs={12} sm={12} md={4}>
-                                    <Button color="primary" onClick={getMilestones("4.7.40")}>Search</Button>
+                                    <Button color="primary" onClick={getMilestones}>Search</Button>
                                 </GridItem>
                                 <GridItem xs={12} sm={12} md={5}>
                                     <Tasks

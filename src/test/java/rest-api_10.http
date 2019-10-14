@@ -3,9 +3,12 @@ Accept: */*
 Cache-Control: no-cache
 ###
 
-
 GET http://localhost:18080/issues/RG-4.7.36/apushkin@ipmks.com
 Accept: */*
 Cache-Control: no-cache
 ###
 
+GET http://localhost:18080/milestones/4.7.40
+Accept: */*
+Cache-Control: no-cache
+###
