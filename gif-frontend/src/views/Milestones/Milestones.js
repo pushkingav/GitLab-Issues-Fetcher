@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Component} from "react";
 // react plugin for creating charts
 // @material-ui/core
 import {makeStyles} from "@material-ui/core/styles";
@@ -37,59 +37,79 @@ const combinedStyles = {
         textDecoration: "none"
     }
 };
-const useStyles = makeStyles(combinedStyles);
 
-export default function Dashboard() {
-    const classes = useStyles();
-    const getMilestones = (searchStr) => {
-        if (!!searchStr) {
-            searchStr = "4.7.40";
-        }
-      Api.get(`/milestones/${searchStr}`).then(({data}) => {
-          console.log(data);
-          this.setState({
-              milestones: data
-          })
-      })
+
+class Milestones extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+          milestones: null,
+          searchString: "4.7.40"
+        };
+    }
+
+    useStyles = () => {
+        makeStyles(combinedStyles);
     };
-    return (
-        <div>
-            <GridContainer>
-                <GridItem xs={12} sm={12} md={8}>
-                    <Card>
-                        <CardHeader color="primary">
-                            <h4 className={classes.cardTitleWhite}>Select Milestones</h4>
-                            <p className={classes.cardCategoryWhite}>Choose Milestones to list issues...</p>
-                        </CardHeader>
-                        <CardBody>
-                            <GridContainer alignItems={"flex-end"}>
-                                <GridItem xs={12} sm={12} md={4}>
-                                    <CustomInput
-                                        labelText="Search Milestones"
-                                        id="searchMilestone"
-                                        formControlProps={{
-                                            fullWidth: true
-                                        }}
-                                    />
-                                </GridItem>
-                                <GridItem xs={12} sm={12} md={4}>
-                                    <Button color="primary" onClick={getMilestones}>Search</Button>
-                                </GridItem>
-                                <GridItem xs={12} sm={12} md={5}>
-                                    <Tasks
-                                        checkedIndexes={[1]}
-                                        tasksIndexes={[0, 1, 2]}
-                                        tasks={milestones}
-                                    />
-                                </GridItem>
-                            </GridContainer>
-                        </CardBody>
-                        <CardFooter>
-                            <Button color="primary">List Issues</Button>
-                        </CardFooter>
-                    </Card>
-                </GridItem>
-            </GridContainer>
-        </div>
-    );
+
+    classes = () => {
+        this.useStyles();
+    };
+
+    getMilestones = (searchString) => {
+        if (!!searchString) {
+            searchString = this.state.searchString;
+        }
+        Api.get(`/milestones/${searchString}`).then(({data}) => {
+            console.log(data);
+            this.setState({
+                milestones: data
+            })
+        })
+    };
+
+    render() {
+        return (
+            <div>
+                <GridContainer>
+                    <GridItem xs={12} sm={12} md={8}>
+                        <Card>
+                            <CardHeader color="primary">
+                                <h4 className={this.classes.cardTitleWhite}>Select Milestones</h4>
+                                <p className={this.classes.cardCategoryWhite}>Choose Milestones to list issues...</p>
+                            </CardHeader>
+                            <CardBody>
+                                <GridContainer alignItems={"flex-end"}>
+                                    <GridItem xs={12} sm={12} md={4}>
+                                        <CustomInput
+                                            labelText="Search Milestones"
+                                            id="searchMilestone"
+                                            formControlProps={{
+                                                fullWidth: true
+                                            }}
+                                        />
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={4}>
+                                        <Button color="primary" onClick={this.getMilestones}>Search</Button>
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={5}>
+                                        <Tasks
+                                            checkedIndexes={[1]}
+                                            tasksIndexes={[0, 1, 2]}
+                                            tasks={milestones}
+                                        />
+                                    </GridItem>
+                                </GridContainer>
+                            </CardBody>
+                            <CardFooter>
+                                <Button color="primary">List Issues</Button>
+                            </CardFooter>
+                        </Card>
+                    </GridItem>
+                </GridContainer>
+            </div>
+        );
+    }
 }
+
+export default Milestones;

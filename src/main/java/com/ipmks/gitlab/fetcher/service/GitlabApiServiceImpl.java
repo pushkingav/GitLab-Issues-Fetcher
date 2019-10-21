@@ -5,6 +5,7 @@ import com.ipmks.gitlab.fetcher.model.to.IssueTo;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.models.Milestone;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -46,6 +47,7 @@ public class GitlabApiServiceImpl implements GitlabApiService {
     }
 
     @Override
+    @Cacheable("milestones")
     public List<Milestone> getMilestones(String startingWith) {
         return GitlabUtils.getMilestones(gitLabApi, nameSpace, projectName, startingWith);
     }
