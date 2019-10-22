@@ -16,7 +16,6 @@ import Tasks from "../../components/Tasks/Tasks";
 
 import Api from "utils/Api";
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
-import {milestones} from "variables/general.js"
 
 const combinedStyles = {
     ...styles,
@@ -68,7 +67,14 @@ class Milestones extends Component {
         })
     };
 
+    handleMilestonesInputChange = (event) => {
+        this.setState({
+            searchString: event.target.value
+        });
+    };
+
     render() {
+        const {milestones} = this.state;
         return (
             <div>
                 <GridContainer>
@@ -84,6 +90,9 @@ class Milestones extends Component {
                                         <CustomInput
                                             labelText="Search Milestones"
                                             id="searchMilestone"
+                                            inputProps={
+                                                {onChange: this.handleMilestonesInputChange}
+                                            }
                                             formControlProps={{
                                                 fullWidth: true
                                             }}
@@ -94,9 +103,7 @@ class Milestones extends Component {
                                     </GridItem>
                                     <GridItem xs={12} sm={12} md={5}>
                                         <Tasks
-                                            checkedIndexes={[1]}
-                                            tasksIndexes={[0, 1, 2]}
-                                            tasks={milestones}
+                                            tasks={milestones ? ["No Data"] : milestones}
                                         />
                                     </GridItem>
                                 </GridContainer>
