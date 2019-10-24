@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 // react plugin for creating charts
 // @material-ui/core
-import {makeStyles} from "@material-ui/core/styles";
+import {withStyles} from "@material-ui/core/styles";
 // @material-ui/icons
 // core components
 import Button from "components/CustomButtons/Button.js";
@@ -42,18 +42,10 @@ class Milestones extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          milestones: null,
+          milestones: ["4.7.40-DEV1", "4.7.40-DEV2"],
           searchString: "4.7.40"
         };
     }
-
-    useStyles = () => {
-        makeStyles(combinedStyles);
-    };
-
-    classes = () => {
-        this.useStyles();
-    };
 
     getMilestones = (searchString) => {
         if (!!searchString) {
@@ -75,19 +67,21 @@ class Milestones extends Component {
 
     render() {
         const {milestones} = this.state;
+        const {classes} = this.props;
         return (
             <div>
                 <GridContainer>
                     <GridItem xs={12} sm={12} md={8}>
                         <Card>
                             <CardHeader color="primary">
-                                <h4 className={this.classes.cardTitleWhite}>Select Milestones</h4>
-                                <p className={this.classes.cardCategoryWhite}>Choose Milestones to list issues...</p>
+                                <h4 className={classes.cardTitleWhite}>Select Milestones</h4>
+                                <p className={classes.cardCategoryWhite}>Choose Milestones to list issues...</p>
                             </CardHeader>
                             <CardBody>
                                 <GridContainer alignItems={"flex-end"}>
                                     <GridItem xs={12} sm={12} md={4}>
                                         <CustomInput
+                                            classes = {classes}
                                             labelText="Search Milestones"
                                             id="searchMilestone"
                                             inputProps={
@@ -103,7 +97,9 @@ class Milestones extends Component {
                                     </GridItem>
                                     <GridItem xs={12} sm={12} md={5}>
                                         <Tasks
-                                            tasks={milestones ? ["No Data"] : milestones}
+                                            tasks={milestones.map(m => m.title)}
+                                            checkedIndexes={[0]}
+                                            tasksIndexes={[0,1]}
                                         />
                                     </GridItem>
                                 </GridContainer>
@@ -119,4 +115,4 @@ class Milestones extends Component {
     }
 }
 
-export default Milestones;
+export default withStyles(combinedStyles)(Milestones);
